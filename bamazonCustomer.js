@@ -1,4 +1,5 @@
-const mysql = require("mysql");
+const mysql = require('mysql');
+const inquirer = require('inquirer')
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -8,8 +9,25 @@ const db = mysql.createConnection({
   database: "bamazon"
 });
 
-db.connect(function(err) {
-  if (err) throw err;
-  console.log('connected as id ' + db.threadId);
-  db.end();
+showProduct = (name) => {
+  db.query('SELECT' + name + 'FROM products', function (err, res) {
+    if (name === 'graphics card') {
+      console.log('Awesome!');
+    }
+    db.end();
+  });
+}
+
+inquirer.prompt([
+  {
+    name: 'productName',
+    message: 'What is the name of the product you\'d like to buy?',
+  },
+  {
+    name: 'numberOfUnits',
+    message: 'How many units would you like to purchase?',
+  }
+]).then(function(inquirerResponse) {
+  showProduct(inquirerResponse.productName.toLowerCase());
 });
+
