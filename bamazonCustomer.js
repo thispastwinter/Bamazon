@@ -23,8 +23,8 @@ questions = () => {
       name: 'numberOfUnits',
       message: 'How many units would you like to purchase?',
     }
-  ]).then(function () {
-    updateProduct();
+  ]).then(function (inquirerResponse) {
+    updateProduct(inquirerResponse.productName, inquirerResponse.numberOfUnits);
   });
 }
 
@@ -36,6 +36,22 @@ showProduct = () => {
   });
 }
 
- updateProduct = () => {
-   console.log('You found me!')
+ updateProduct = (name, quantity) => {
+   console.log('Updating Product\'s!')
+   const query = db.query(
+     `UPDATE products SET stock_quantity = stock_quantity - ${quantity} WHERE ?`,
+     [
+       {
+         product_name: name
+       }
+     ],
+     function (err, res) {
+       if(db.query('SELECT product_name FROM products WHERE stock_quantity <= 0') === name) {
+       console.log('No Way!');
+       } else {
+       console.log(res.affectedRows + ' product(s) updated!');
+       }
+     }
+   );
+   console.log(query.sql);
  }
