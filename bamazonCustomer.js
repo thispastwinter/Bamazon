@@ -6,28 +6,36 @@ const db = mysql.createConnection({
   port: 3306,
   user: "root",
   password: "",
-  database: "bamazon"
+  database: "bamazon",
 });
 
-showProduct = (name) => {
-  db.query('SELECT' + name + 'FROM products', function (err, res) {
-    if (name === 'graphics card') {
-      console.log('Awesome!');
+db.connect(function (err) {
+  if (err) throw err;
+  showProduct();
+})
+
+questions = () => {
+  inquirer.prompt([{
+      name: 'productName',
+      message: 'What is the name of the product you\'d like to buy?',
+    },
+    {
+      name: 'numberOfUnits',
+      message: 'How many units would you like to purchase?',
     }
-    db.end();
+  ]).then(function () {
+    updateProduct();
   });
 }
 
-inquirer.prompt([
-  {
-    name: 'productName',
-    message: 'What is the name of the product you\'d like to buy?',
-  },
-  {
-    name: 'numberOfUnits',
-    message: 'How many units would you like to purchase?',
-  }
-]).then(function(inquirerResponse) {
-  showProduct(inquirerResponse.productName.toLowerCase());
-});
 
+showProduct = () => {
+  db.query('SELECT * FROM products', function (err, res) {
+    console.log(res);
+    questions();
+  });
+}
+
+ updateProduct = () => {
+   console.log('You found me!')
+ }
