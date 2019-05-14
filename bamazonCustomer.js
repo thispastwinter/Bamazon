@@ -11,47 +11,57 @@ const db = mysql.createConnection({
 
 db.connect(function (err) {
   if (err) throw err;
-  showProduct();
+  showProducts();
 })
+
+showProducts = () => {
+  db.query('SELECT * FROM products', function (err, res) {
+    if (err) throw err;
+    res.forEach(function (x) {
+      console.log(x.id, x.product_name, x.price);
+    })
+    questions();
+  });
+}
 
 questions = () => {
   inquirer.prompt([{
       name: 'productName',
-      message: 'What is the name of the product you\'d like to buy?',
+      message: 'What is the ID of the product you\'d like to buy?',
     },
     {
       name: 'numberOfUnits',
       message: 'How many units would you like to purchase?',
     }
   ]).then(function (inquirerResponse) {
-    updateProduct(inquirerResponse.productName, inquirerResponse.numberOfUnits);
+    checkQuantities(parseInt(inquirerResponse.productName), inquirerResponse.numberOfUnits);
   });
 }
 
-
-showProduct = () => {
-  db.query('SELECT * FROM products', function (err, res) {
-    console.log(res);
-    questions();
+checkQuantities = (number, quantity) => {
+  console.log('Checking Quantities!')
+  db.query(`SELECT id FROM products WHERE stock_quantity <= 0 AND id = ${number}`, function (err, res) {
+    if (err) throw err;
+    if (res[0].id === number) {
+      console.log(id, res[0].id)
+      console.log('We apologize, but that item is no longer available.')
+      db.end();
+    } else {
+      updateProduct(number, quantity);
+    }
   });
 }
 
- updateProduct = (name, quantity) => {
-   console.log('Updating Product\'s!')
-   const query = db.query(
-     `UPDATE products SET stock_quantity = stock_quantity - ${quantity} WHERE ?`,
-     [
-       {
-         product_name: name
-       }
-     ],
-     function (err, res) {
-       if(db.query('SELECT product_name FROM products WHERE stock_quantity <= 0') === name) {
-       console.log('No Way!');
-       } else {
-       console.log(res.affectedRows + ' product(s) updated!');
-       }
-     }
-   );
-   console.log(query.sql);
- }
+updateProduct = (number, quantity) => {
+  console.log('Updating Products!')
+  db.query(
+    `UPDATE products SET stock_quantity = stock_quantity - ${quantity} WHERE ?`,
+    [{
+      id: number
+    }],
+    function (err, res) {
+      if (err) throw err;
+      console.log(res.affectedRows + ' product(s) updated!');
+      db.end();
+    });
+}
