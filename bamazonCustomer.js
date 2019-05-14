@@ -40,10 +40,9 @@ questions = () => {
 
 checkQuantities = (number, quantity) => {
   console.log('Checking Quantities!')
-  db.query(`SELECT id FROM products WHERE stock_quantity <= 0 AND id = ${number}`, function (err, res) {
+  db.query(`SELECT id FROM products WHERE stock_quantity <= 0`, function (err, res) {
     if (err) throw err;
     if (res[0].id === number) {
-      console.log(id, res[0].id)
       console.log('We apologize, but that item is no longer available.')
       db.end();
     } else {
