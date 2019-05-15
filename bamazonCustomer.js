@@ -1,5 +1,9 @@
+// Required Modules
+
 const mysql = require('mysql');
 const inquirer = require('inquirer')
+
+// Database Connection
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -9,10 +13,14 @@ const db = mysql.createConnection({
   database: "bamazon",
 });
 
+// Once connected to database, initial functin is triggered
+
 db.connect(function (err) {
   if (err) throw err;
   showProducts();
 })
+
+// Displays all products in database, then triggers inquirer prompts via questions()
 
 showProducts = () => {
   db.query('SELECT * FROM products', function (err, res) {
@@ -24,10 +32,15 @@ showProducts = () => {
   });
 }
 
+// This function is passed to inquirer to ensure user only enters numbers as values
+// Found this solution online
+
 function validateNumber(number) {
   const reg = /^\d+$/;
   return reg.test(number) || "Must be a number!";
 }
+
+// Initial Inquirer questions
 
 questions = () => {
   inquirer.prompt([{
@@ -47,6 +60,8 @@ questions = () => {
   });
 }
 
+// Secondary Inquirer questions
+
 additionalQuestions = (number, quantity) => {
   inquirer.prompt([{
     type: 'list',
@@ -63,16 +78,7 @@ additionalQuestions = (number, quantity) => {
   })
 }
 
-updateProduct = (number, quantity) => {
-  console.log('Congratulation, your purchase was successful!')
-  db.query(`UPDATE products SET stock_quantity = stock_quantity - ${quantity} WHERE stock_quantity > 0 AND id=${number}`,
-    function (err, res) {
-      if (err) throw err;
-        console.log(res.affectedRows + ' product(s) updated!');
-        console.log(('-').repeat(30));
-        additionalQuestions();
-    });
-}
+// Checks inventory against users input and acts accordingly
 
 checkInventory = (number, quantity) => {
   console.log('Checking Inventory!')
@@ -93,3 +99,17 @@ checkInventory = (number, quantity) => {
       }
     });
 }
+
+// Updates products if they pass the conditionals of checkInventory()
+
+updateProduct = (number, quantity) => {
+  console.log('Congratulation, your purchase was successful!')
+  db.query(`UPDATE products SET stock_quantity = stock_quantity - ${quantity} WHERE stock_quantity > 0 AND id=${number}`,
+    function (err, res) {
+      if (err) throw err;
+        console.log(res.affectedRows + ' product(s) updated!');
+        console.log(('-').repeat(30));
+        additionalQuestions();
+    });
+}
+
