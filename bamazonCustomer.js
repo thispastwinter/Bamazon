@@ -5,7 +5,7 @@ const db = mysql.createConnection({
   host: "localhost",
   port: 3306,
   user: "root",
-  password: "",
+  password: "enjoii189",
   database: "bamazon",
 });
 
@@ -24,43 +24,72 @@ showProducts = () => {
   });
 }
 
+function validateNumber(number) {
+  const reg = /^\d+$/;
+  return reg.test(number) || "Must be a number!";
+}
+
 questions = () => {
   inquirer.prompt([{
+      type: 'input',
       name: 'productName',
       message: 'What is the ID of the product you\'d like to buy?',
+      validate: validateNumber
     },
     {
+      type: 'input',
       name: 'numberOfUnits',
       message: 'How many units would you like to purchase?',
+      validate: validateNumber
     }
   ]).then(function (inquirerResponse) {
-    checkQuantities(parseInt(inquirerResponse.productName), inquirerResponse.numberOfUnits);
+    checkInventory(parseInt(inquirerResponse.productName), parseInt(inquirerResponse.numberOfUnits));
   });
 }
 
-checkQuantities = (number, quantity) => {
-  console.log('Checking Quantities!')
-  db.query(`SELECT id FROM products WHERE stock_quantity <= 0`, function (err, res) {
-    if (err) throw err;
-    if (res[0].id === number) {
-      console.log('We apologize, but that item is no longer available.')
-      db.end();
+additionalQuestions = (number, quantity) => {
+  inquirer.prompt([{
+    type: 'list',
+    name: 'orderAnyway',
+    message: 'Would you still like to place an order?',
+    choices: ['Yes', 'No']
+  }]).then(function (inquirerResponse) {
+    if (inquirerResponse.orderAnyway === 'Yes') {
+      console.log(('-').repeat(30));
+      showProducts();
     } else {
-      updateProduct(number, quantity);
+      db.end();
     }
-  });
+  })
 }
 
 updateProduct = (number, quantity) => {
-  console.log('Updating Products!')
-  db.query(
-    `UPDATE products SET stock_quantity = stock_quantity - ${quantity} WHERE ?`,
-    [{
-      id: number
-    }],
+  console.log('Congratulation, your purchase was successful!')
+  db.query(`UPDATE products SET stock_quantity = stock_quantity - ${quantity} WHERE stock_quantity > 0 AND id=${number}`,
     function (err, res) {
       if (err) throw err;
-      console.log(res.affectedRows + ' product(s) updated!');
-      db.end();
+        console.log(res.affectedRows + ' product(s) updated!');
+        console.log(('-').repeat(30));
+        additionalQuestions();
+    });
+}
+
+checkInventory = (number, quantity) => {
+  console.log('Checking Inventory!')
+  console.log(('-').repeat(30));
+  db.query(`SELECT stock_quantity FROM products WHERE id=${number}`,
+    function (err, res) {
+      if (err) throw err;
+      if (quantity > res[0].stock_quantity && res[0].stock_quantity > 0) {
+        console.log(`We're sorry but there are only ${res[0].stock_quantity} items left!`);
+        console.log(('-').repeat(30));
+        additionalQuestions(number, quantity);
+      } else if (res[0].stock_quantity === 0) {
+        console.log('We\'re sorry, but that item is completely out of stock!');
+        console.log(('-').repeat(30));
+        additionalQuestions(number, quantity);
+      } else {
+        updateProduct(number, quantity);
+      }
     });
 }
