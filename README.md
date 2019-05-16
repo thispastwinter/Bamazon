@@ -11,4 +11,4 @@ Off brand of your favorite web store
 
 ## Out Of Stock
 
-![](gifs/Out Of Stock.gif)
+![](gifs/Out%Of%Stock.gif)
