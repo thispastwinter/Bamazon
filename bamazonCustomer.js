@@ -64,12 +64,37 @@ questions = () => {
 
 additionalQuestions = (number, quantity) => {
   inquirer.prompt([{
+      type: 'list',
+      name: 'orderAnyway',
+      message: 'Would you still like to place an order?',
+      choices: ['Yes', 'No']
+    },
+    {
+      type: 'input',
+      name: 'numberOfUnits',
+      message: `How many units would you like to purchase? There are ${quantity} units left.`,
+      validate: validateNumber
+    }
+  ]).then(function (inquirerResponse) {
+    if (inquirerResponse.orderAnyway === 'Yes') {
+      console.log(('-').repeat(30));
+      updateProduct(number, parseInt(inquirerResponse.numberOfUnits));
+    } else {
+      continueShopping();
+    }
+  })
+}
+
+// Continue shopping?
+
+continueShopping = () => {
+  inquirer.prompt([{
     type: 'list',
-    name: 'orderAnyway',
-    message: 'Would you still like to place an order?',
+    name: 'continueShopping',
+    message: 'Continue Shopping?',
     choices: ['Yes', 'No']
   }]).then(function (inquirerResponse) {
-    if (inquirerResponse.orderAnyway === 'Yes') {
+    if (inquirerResponse.continueShopping === 'Yes') {
       console.log(('-').repeat(30));
       showProducts();
     } else {
@@ -89,11 +114,11 @@ checkInventory = (number, quantity) => {
       if (quantity > res[0].stock_quantity && res[0].stock_quantity > 0) {
         console.log(`We're sorry but there are only ${res[0].stock_quantity} items left!`);
         console.log(('-').repeat(30));
-        additionalQuestions(number, quantity);
+        additionalQuestions(number, res[0].stock_quantity);
       } else if (res[0].stock_quantity === 0) {
         console.log('We\'re sorry, but that item is completely out of stock!');
         console.log(('-').repeat(30));
-        additionalQuestions(number, quantity);
+        continueShopping()
       } else {
         updateProduct(number, quantity);
       }
@@ -107,9 +132,8 @@ updateProduct = (number, quantity) => {
   db.query(`UPDATE products SET stock_quantity = stock_quantity - ${quantity} WHERE stock_quantity > 0 AND id=${number}`,
     function (err, res) {
       if (err) throw err;
-        console.log(res.affectedRows + ' product(s) updated!');
-        console.log(('-').repeat(30));
-        additionalQuestions();
+      console.log(res.affectedRows + ' product(s) updated!');
+      console.log(('-').repeat(30));
+      continueShopping();
     });
 }
-
