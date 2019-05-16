@@ -76,11 +76,13 @@ additionalQuestions = (number, quantity) => {
       validate: validateNumber
     }
   ]).then(function (inquirerResponse) {
-    if (inquirerResponse.orderAnyway === 'Yes') {
+    if (inquirerResponse.orderAnyway === 'Yes' && inquirerResponse.numberOfUnits <= quantity) {
       console.log(('-').repeat(30));
       updateProduct(number, parseInt(inquirerResponse.numberOfUnits));
-    } else {
-      continueShopping();
+    } else  if (inquirerResponse.orderAnyway === 'Yes' && inquirerResponse.numberOfUnits > quantity) {
+      console.log(('-').repeat(30));
+      console.log('The number you\'ve entered surpasses the available amount!');
+      additionalQuestions(number, quantity);
     }
   })
 }
