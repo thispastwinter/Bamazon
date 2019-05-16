@@ -1,5 +1,5 @@
-# Bamazon
-Off brand of your favorite web store
+# ![#1589F0]Bamazon
+Off brand of your favorite web store!
 
 ## Standard Flow
 
