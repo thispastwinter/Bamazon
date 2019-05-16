@@ -6,11 +6,11 @@ const inquirer = require('inquirer')
 // Database Connection
 
 const db = mysql.createConnection({
-  host: "localhost",
+  host: 'localhost',
   port: 3306,
-  user: "root",
-  password: "enjoii189",
-  database: "bamazon",
+  user: 'root',
+  password: '',
+  database: 'bamazon',
 });
 
 // Once connected to database, initial functin is triggered

@@ -1,4 +1,4 @@
-# ![#1589F0]Bamazon
+# Bamazon
 Off brand of your favorite web store!
 
 ## Standard Flow
@@ -9,12 +9,12 @@ Here is the standard flow of the app. A user selects an item based on its ID, th
 
 ## Over Order
 
-If the user trys to order more than what's available, the app list out the available amount. There are checks and balances here. If they still enter a number over the available inventory, it alerts the user. Once they have entered a number less than or equal to the amount, or have decided to bypass ordering that item, the user is asked if they'd like to continue shopping.
+If the user trys to order more than what's available, the app lists out the available amount. There are checks and balances here. If they still enter a number over the available inventory, it alerts the user. Once they have entered a number less than or equal to the amount, or have decided to bypass ordering the item, the user is asked if they'd like to continue shopping.
 
 ![](gifs/OverOrder.gif)
 
 ## Out Of Stock
 
-When and item is out of stock, the user is alerted and asked if they'd like to continue shopping. If they select 'no' the connection is ended.
+When an item is out of stock, the user is alerted and asked if they'd like to continue shopping. If they select 'no' the connection is ended.
 
 ![](gifs/outofstock.gif)
