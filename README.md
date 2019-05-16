@@ -3,12 +3,12 @@ Off brand of your favorite web store
 
 ## Standard Flow
 
-![](gifs/StandardFlow.gif)
+![](gifs/StandardFlow.gif | width=300)
 
 ## Over Order
 
-![](gifs/OverOrder.gif)
+![](gifs/OverOrder.gif | width=300)
 
 ## Out Of Stock
 
-![](gifs/outofstock.gif)
+![](gifs/outofstock.gif | width=300)
