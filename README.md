@@ -3,12 +3,14 @@ Off brand of your favorite web store
 
 ## Standard Flow
 
-![](gifs/StandardFlow.gif | width=300)
+Here is the standard flow of the app. A user selects an item based on its ID. They then define a quantity. The app then checks the inventory to ensure there are enough items. Once successful, it displays that the item was updated successfully. (Not displayed here, but viewable in bamazonCustomer.js: there is validation for both inputs, only allowing the user to enter a number.)
+
+![](gifs/StandardFlow.gif)
 
 ## Over Order
 
-![](gifs/OverOrder.gif | width=300)
+![](gifs/OverOrder.gif)
 
 ## Out Of Stock
 
-![](gifs/outofstock.gif | width=300)
+![](gifs/outofstock.gif)
